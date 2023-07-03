@@ -1,0 +1,23 @@
+apiVersion: serving.knative.dev/v1
+kind: Service
+metadata:
+  annotations:
+     run.googleapis.com/launch-stage: BETA
+  name: sidecar-auth-test
+spec:
+  template:
+    metadata:
+      annotations:
+        run.googleapis.com/execution-environment: gen1 #or gen2
+        run.googleapis.com/container-dependencies: '{"sidecar-client":["auth-sidecar"]}'
+    spec:
+      containers:
+      - image: PROXY_IMAGE
+        name: auth-sidecar
+        ports:  
+          - containerPort: 8080
+        env:
+          - name: REMOTE_URL
+            value: http://localhost:8090
+      - image: CLIENT_IMAGE
+        name: sidecar-client      
